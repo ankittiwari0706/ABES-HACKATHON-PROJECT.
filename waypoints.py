@@ -1,6 +1,4 @@
-# MISSION WAYPOINTS
-# Drone visits each waypoint in order before reaching goal.
-# Path is chained: start→wp1→wp2→...→wpN→destination
+
 
 def plan_waypoint_mission(grid, start, waypoints,
                            destination, cfg, algo='theta'):
@@ -18,7 +16,7 @@ def plan_waypoint_mission(grid, start, waypoints,
         seg  = plan_path(algo, grid, src, dst, cfg)
         if not seg:
             raise ValueError(f"No path: {src} → {dst}")
-        # Avoid duplicating junction points
+       
         if full_path and seg[0]==full_path[-1]:
             seg = seg[1:]
         full_path.extend(seg)
@@ -26,7 +24,7 @@ def plan_waypoint_mission(grid, start, waypoints,
 
     return full_path, segments
 
-# Waypoint ETA calculation
+
 def estimate_eta(path, current_step, waypoints):
     eta = {}
     wp_set = {tuple(w) for w in waypoints}
