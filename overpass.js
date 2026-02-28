@@ -1,18 +1,15 @@
-// ============================================================
-// OVERPASS  —  real obstacle fetch from OSM Overpass API
-// ============================================================
+
 
 let realObstaclesLoaded=false;
 
-// ── OSM OBSTACLE FETCH — debounced, cached, retry with backoff ────────────
-let _fetchTimer=null;
-let _lastFetchBbox=null;       // bbox string of last successful fetch
-let _lastFetchData=null;       // cached parsed JSON
-let _fetchInProgress=false;
-const FETCH_DEBOUNCE=2000;     // ms to wait after last pan/zoom before fetching
-const BBOX_THRESHOLD=0.003;    // degrees — don't re-fetch if map moved less than this
 
-// Overpass mirrors — tried in order, 429/5xx skips to next
+let _fetchTimer=null;
+let _lastFetchBbox=null;    
+let _lastFetchData=null;       
+let _fetchInProgress=false;
+const FETCH_DEBOUNCE=2000;     
+const BBOX_THRESHOLD=0.003;   
+
 const OVERPASS_MIRRORS=[
   'https://overpass.kumi.systems/api/interpreter',
   'https://overpass-api.de/api/interpreter',
@@ -20,7 +17,7 @@ const OVERPASS_MIRRORS=[
 ];
 
 function fetchRealObstacles(){
-  if(_fetchInProgress) return;       // don't queue while one is running
+  if(_fetchInProgress) return;     
   clearTimeout(_fetchTimer);
   _fetchTimer=setTimeout(_doFetchRealObstacles, FETCH_DEBOUNCE);
 }
@@ -32,7 +29,7 @@ async function _doFetchRealObstacles(){
   const n=+bounds.getNorth().toFixed(4), e=+bounds.getEast().toFixed(4);
   const bboxKey=`${s},${w},${n},${e}`;
 
-  // Skip if we already have data for virtually the same area
+  
   if(_lastFetchBbox && _lastFetchData){
     const [ps,pw,pn,pe]=_lastFetchBbox.split(',').map(Number);
     if(Math.abs(s-ps)<BBOX_THRESHOLD && Math.abs(w-pw)<BBOX_THRESHOLD &&
@@ -48,7 +45,7 @@ async function _doFetchRealObstacles(){
   document.getElementById('map-info').textContent='⏳ Loading real obstacles...';
 
   const bbox=`${s},${w},${n},${e}`;
-  // Simpler query — fewer tags, less data, less likely to hit rate limit
+  
   const query=
     `[out:json][timeout:25];`+
     `(`+
@@ -63,11 +60,11 @@ async function _doFetchRealObstacles(){
 
   for(let mi=0; mi<OVERPASS_MIRRORS.length; mi++){
     const mirror=OVERPASS_MIRRORS[mi];
-    // Exponential backoff between mirror attempts
+   
     if(mi>0) await new Promise(r=>setTimeout(r, 1500*mi));
     try{
       const ctrl=new AbortController();
-      const timeout=setTimeout(()=>ctrl.abort(),18000); // 18s timeout per mirror
+      const timeout=setTimeout(()=>ctrl.abort(),18000); 
       const res=await fetch(mirror,{
         method:'POST',
         headers:{'Content-Type':'application/x-www-form-urlencoded'},
@@ -80,7 +77,7 @@ async function _doFetchRealObstacles(){
         const wait=parseInt(res.headers.get('Retry-After')||'10')*1000||10000;
         addLog(`Rate limited by ${mirror.split('/')[2]} — waiting ${wait/1000}s`,'warn');
         await new Promise(r=>setTimeout(r,wait));
-        // Retry same mirror once after waiting
+       
         const res2=await fetch(mirror,{method:'POST',
           headers:{'Content-Type':'application/x-www-form-urlencoded'},
           body:'data='+encodeURIComponent(query)});
@@ -134,7 +131,7 @@ function _applyObstaclesToGrid(data){
   const totalLat=mapBounds.getNorth()-mapBounds.getSouth();
   const totalLng=mapBounds.getEast()-mapBounds.getWest();
 
-  // Build node lookup: id → {lat,lon}
+
   const nodes={};
   data.elements.forEach(el=>{ if(el.type==='node') nodes[el.id]={lat:el.lat,lon:el.lon}; });
 
@@ -144,7 +141,7 @@ function _applyObstaclesToGrid(data){
     if(el.type!=='way') return;
     const tags=el.tags||{};
 
-    // Determine cell type
+    
     let cellType=null;
     if(tags.building) cellType=CELL.OBSTACLE;
     else if(tags.natural==='water'||tags.waterway==='riverbank'||
@@ -153,12 +150,12 @@ function _applyObstaclesToGrid(data){
     else if(tags.highway==='motorway') cellType=CELL.NOFLY;
     if(!cellType) return;
 
-    // Resolve node refs to coordinates
+  
     if(!el.nodes||el.nodes.length<2) return;
     const coords=el.nodes.map(id=>nodes[id]).filter(Boolean);
     if(coords.length<2) return;
 
-    // Compute bbox of this way
+    
     const lats=coords.map(p=>p.lat);
     const lngs=coords.map(p=>p.lon);
     const minLat=Math.min(...lats), maxLat=Math.max(...lats);
@@ -180,7 +177,7 @@ function _applyObstaclesToGrid(data){
     }
   });
 
-  // Restore markers
+ 
   grid[startPos.y][startPos.x]=CELL.START;
   if(destPos) grid[destPos.y][destPos.x]=CELL.DEST;
   waypoints.forEach(wp=>grid[wp.y][wp.x]=CELL.WAYPOINT);
