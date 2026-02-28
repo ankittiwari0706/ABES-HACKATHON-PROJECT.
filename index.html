@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AEROS v3 — Advanced Drone Platform</title>
+  <title>MATRIX</title>
 
   <!-- External libraries -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -23,7 +23,7 @@
 </div>
 
 <header>
-  <div class="logo">AER<span>OS</span> <span style="font-size:11px;color:var(--dim);letter-spacing:1px">v3</span></div>
+  <div class="logo">MAT<span>RIX</span> </div>
   <div class="status-bar">
     <div class="stat"><span class="stat-label">ALGO</span><span class="stat-value" id="hdr-algo">—</span></div>
     <div class="stat"><span class="stat-label">BATTERY</span><span class="stat-value" id="hdr-bat">100%</span></div>
@@ -42,7 +42,7 @@
 
   <!-- LEFT PANEL -->
   <div class="panel">
-    <div class="ptitle">⬡ MISSION CONFIG</div>
+    <div class="ptitle">⬡ CONFIGURATIONS</div>
     <div class="pbody">
       <div class="cgroup">
         <span class="clabel">Algorithm</span>
@@ -94,8 +94,8 @@
       <hr class="divider">
       <div class="cgroup">
         <span class="clabel">Actions</span>
-        <button class="run-btn" id="run-btn" onclick="runPlanning()">▶ PLAN MISSION</button>
-        <button class="btn primary" onclick="animateDrone()" id="fly-btn" disabled>◈ FLY PATH</button>
+        <button class="run-btn" id="run-btn" onclick="runPlanning()">▶ SET ROUTE</button>
+        <button class="btn primary" onclick="animateDrone()" id="fly-btn" disabled>◈ FLY</button>
         <button class="btn" onclick="generateRandomMap()">⟳ RANDOM MAP</button>
         <button class="btn danger-btn" onclick="clearGrid()">✕ CLEAR ALL</button>
       </div>
@@ -124,7 +124,7 @@
         <button onclick="searchLocation()">GO</button>
         <button onclick="toggleMapSearch()" style="border-color:var(--dim);color:var(--dim)">✕</button>
       </div>
-      <div class="map-info" id="map-info">🗺 LIVE MAP OFF</div>
+      <div class="map-info" id="map-info"> LIVE MAP OFF</div>
       <canvas id="osm-canvas" style="display:none"></canvas>
       <canvas id="grid-canvas"></canvas>
       <canvas id="fog-canvas"></canvas>
@@ -148,7 +148,7 @@
 
   <!-- RIGHT TELEMETRY -->
   <div class="panel right">
-    <div class="ptitle">⬡ TELEMETRY</div>
+    <div class="ptitle">⬡ DASHBOARD</div>
     <div class="pbody">
       <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--dim);margin-bottom:2px;"><span>BATTERY SOC</span><span id="bat-pct-lbl" style="font-family:'Share Tech Mono',monospace;color:var(--accent2)">100%</span></div>
       <div class="bat-bar"><div class="bat-fill" id="bat-fill" style="width:100%"></div></div>
