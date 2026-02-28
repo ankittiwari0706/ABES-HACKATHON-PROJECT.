@@ -1,9 +1,4 @@
-// ============================================================
-// WAYPOINTS  —  add/remove/list, mission chaining, Bezier path
-// ============================================================
 
-// WAYPOINTS
-// ══════════════════════════════════════════════════════════════
 function addWaypoint(x,y){
   if(waypoints.some(w=>w.x===x&&w.y===y)) return;
   waypoints.push({x,y,order:waypoints.length+1});
@@ -55,9 +50,7 @@ function planWaypointPath(algo){
   return full;
 }
 
-// ══════════════════════════════════════════════════════════════
-// BEZIER SMOOTHING
-// ══════════════════════════════════════════════════════════════
+
 function computeBezier(pts){
   if(pts.length<4) return[];
   const bp=[],step=Math.max(1,Math.floor(pts.length/14));
@@ -70,6 +63,4 @@ function computeBezier(pts){
   return bp;
 }
 
-// ══════════════════════════════════════════════════════════════
-// 3D ISOMETRIC VIEW
-// ══════════════════════════════════════════════════════════════
+
