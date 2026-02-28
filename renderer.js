@@ -1,6 +1,3 @@
-// ============================================================
-// RENDERER  —  3D isometric, grid draw, heatmap, trail, overlay, renderAll
-// ============================================================
 
 function toggle3D(){
   view3D=!view3D;
@@ -17,7 +14,7 @@ function draw3D(){
   ctx3.fillStyle='#0a1828';ctx3.fillRect(0,0,W,H);
   const isoW=cellW*0.7,isoH=cellH*0.4;
   const offX=W/2-COLS*isoW/2,offY=H*0.18;
-  // Draw back to front for painter's algorithm
+
   for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
     const cell=grid[r][c];
     const tx=offX+(c-r)*isoW;
@@ -33,24 +30,24 @@ function draw3D(){
     }
     if(fogMap[r]&&fogMap[r][c]) continue;
     const h=baseH;
-    // Top face
+    
     ctx3.beginPath();
     ctx3.moveTo(tx,ty-h);ctx3.lineTo(tx+isoW,ty+isoH-h);
     ctx3.lineTo(tx,ty+isoH*2-h);ctx3.lineTo(tx-isoW,ty+isoH-h);
     ctx3.closePath();ctx3.fillStyle=topCol;ctx3.fill();
     ctx3.strokeStyle='rgba(0,0,0,0.5)';ctx3.lineWidth=0.7;ctx3.stroke();
-    // Right face
+  
     ctx3.beginPath();
     ctx3.moveTo(tx+isoW,ty+isoH-h);ctx3.lineTo(tx+isoW,ty+isoH);
     ctx3.lineTo(tx,ty+isoH*2);ctx3.lineTo(tx,ty+isoH*2-h);
     ctx3.closePath();ctx3.fillStyle=sideCol;ctx3.fill();ctx3.stroke();
-    // Left face
+    
     ctx3.beginPath();
     ctx3.moveTo(tx-isoW,ty+isoH-h);ctx3.lineTo(tx-isoW,ty+isoH);
     ctx3.lineTo(tx,ty+isoH*2);ctx3.lineTo(tx,ty+isoH*2-h);
     ctx3.closePath();ctx3.fillStyle=frontCol;ctx3.fill();ctx3.stroke();
   }
-  // Draw drone in 3D
+  
   const{x,y}=dronePos;
   const dtx=offX+(x-y)*isoW,dty=offY+(x+y)*isoH;
   ctx3.fillStyle='#00ff9d';ctx3.shadowColor='#00ff9d';ctx3.shadowBlur=16;
@@ -72,7 +69,7 @@ function draw3D(){
     }
     ctx3.stroke();ctx3.setLineDash([]);
   }
-  // Trail in 3D — bright glowing line along visited cells
+  // Trail in 3D —
   if(trailHistory.length>1){
     const TAIL3D=Math.min(trailHistory.length,30);
     const start3D=Math.max(0,trailHistory.length-TAIL3D);
@@ -103,9 +100,7 @@ function draw3D(){
   });
 }
 
-// ══════════════════════════════════════════════════════════════
-// MAIN GRID RENDER
-// ══════════════════════════════════════════════════════════════
+
 function cellColor(cell){
   switch(cell){
     case CELL.SAFE:return'#1e3a5c'; case CELL.OBSTACLE:return'#7a1515';
@@ -179,10 +174,7 @@ function drawHeatmap(){
   }
   drawGeofenceOverlay(ctxG);drawMarkersOnCtx(ctxG);
 }
-// ══════════════════════════════════════════════════════════════
-// TRAIL HIGHLIGHT — brightens only cells the drone has flown through
-// Fades from full glow at current position back along the trail
-// ══════════════════════════════════════════════════════════════
+
 function drawTrailHighlight(ctx){
   if(!trailHistory.length) return;
   const len=trailHistory.length;
@@ -229,9 +221,9 @@ function drawOverlay(){
     ctxOv.stroke();ctxOv.setLineDash([]);
   }
 }
-// Draw path/covered/obstacle cells onto overlay when map mode is active
+// Draw path
 function drawPathOnOverlay(){
-  // Draw only non-safe cells as semi-transparent fills
+ 
   for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
     const cell=grid[r][c];
     let fill=null;
@@ -245,12 +237,12 @@ function drawPathOnOverlay(){
       ctxOv.fillRect(c*cellW,r*cellH,cellW-1,cellH-1);
     }
   }
-  // Draw subtle grid lines
+ 
   ctxOv.strokeStyle='rgba(0,180,255,0.12)';
   ctxOv.lineWidth=0.4;
   for(let r=0;r<=ROWS;r++){ctxOv.beginPath();ctxOv.moveTo(0,r*cellH);ctxOv.lineTo(COLS*cellW,r*cellH);ctxOv.stroke();}
   for(let c=0;c<=COLS;c++){ctxOv.beginPath();ctxOv.moveTo(c*cellW,0);ctxOv.lineTo(c*cellW,ROWS*cellH);ctxOv.stroke();}
-  // Bezier path
+ 
   if(bezierPts.length>3){
     ctxOv.strokeStyle='rgba(255,210,0,.85)';ctxOv.lineWidth=2;ctxOv.setLineDash([4,4]);
     ctxOv.beginPath();
@@ -262,7 +254,7 @@ function drawPathOnOverlay(){
         bp[i+3][0]*cellW+cellW/2,bp[i+3][1]*cellH+cellH/2);
     ctxOv.stroke();ctxOv.setLineDash([]);
   }
-  // Waypoint connectors
+
   if(waypoints.length>0){
     const pts=[startPos,...waypoints,...(destPos?[destPos]:[])];
     ctxOv.strokeStyle='rgba(189,147,249,0.7)';ctxOv.lineWidth=1.5;ctxOv.setLineDash([2,4]);
@@ -276,7 +268,7 @@ function renderAll(){
   updateCanvasOpacity();
   if(view3D){draw3D();return;}
   if(osmVisible){
-    // Map mode: only draw path/markers/fog on top of real map via overlay canvas
+    
     ctxOv.clearRect(0,0,canvasOv.width,canvasOv.height);
     drawGeofenceOverlay(ctxOv);
     drawTrailHighlight(ctxOv);
@@ -295,4 +287,4 @@ function renderAll(){
   drawOverlay();
 }
 
-// ══════════════════════════════════════════════════════════════
+
