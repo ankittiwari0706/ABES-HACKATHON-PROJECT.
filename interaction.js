@@ -1,9 +1,4 @@
-// ============================================================
-// INTERACTION  —  mouse events, draw modes, canvas hit-testing
-// ============================================================
 
-// MOUSE INTERACTION
-// ══════════════════════════════════════════════════════════════
 canvasGrid.addEventListener('mousedown',e=>{isMouseDown=true;handleDraw(e);});
 canvasOv.addEventListener('mousedown',e=>{if(osmVisible){isMouseDown=true;handleDraw(e,true);}});
 canvasOv.addEventListener('mousemove',e=>{
@@ -61,4 +56,4 @@ function handleDraw(e,fromOverlay=false){
   renderAll();
 }
 
-// ══════════════════════════════════════════════════════════════
+
