@@ -1,4 +1,4 @@
-/
+
 const PY = {
 'THETA': `# Θ* — ANY-ANGLE PATH PLANNING
 # Unlike A*, Theta* uses Line-of-Sight to create
