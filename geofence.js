@@ -1,6 +1,5 @@
-// ============================================================
-// GEOFENCE  —  zone overlay, live breach detection, alerts
-// ============================================================
+
+
 
 function drawGeofenceOverlay(ctx){
   geofenceZones.forEach(z=>{
@@ -42,6 +41,4 @@ function closeAlert(){
   if(!missionRunning){document.getElementById('gf-dot').className='gf-dot';document.getElementById('gf-text').textContent='GEOFENCE: CLEAR';}
 }
 
-// ══════════════════════════════════════════════════════════════
-// THETA* ALGORITHM (any-angle)
-// ══════════════════════════════════════════════════════════════
+
