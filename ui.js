@@ -1,9 +1,4 @@
-// ============================================================
-// UI  —  draw modes, view switch, sliders, clear, random map, log
-// ============================================================
 
-// UI HELPERS
-// ══════════════════════════════════════════════════════════════
 function setDrawMode(m){
   drawMode=m;
   ['obstacle','nofly','waypoint','destination','erase'].forEach(x=>{
@@ -16,13 +11,7 @@ function setView(v){
   if(v==='energy'){computeEnergyMap();flashLines('ENERGY',[0,1,2,3,4,5]);}
   renderAll();
 }
-// ══════════════════════════════════════════════════════════════
-// SPEED CONVERSION: cells/sec → m/s
-// Uses Haversine to get real meters per grid cell when map is on,
-// falls back to a fixed 5 m/cell for grid-only mode
-// ══════════════════════════════════════════════════════════════
 
-// ─── Environment sliders, clear, random map, log ───────────
 
 
 function updateBat(){battery=+document.getElementById('sl-bat').value;document.getElementById('bat-val').textContent=battery+'%';document.getElementById('hdr-bat').textContent=battery+'%';document.getElementById('bat-fill').style.width=battery+'%';document.getElementById('bat-pct-lbl').textContent=battery+'%';}
