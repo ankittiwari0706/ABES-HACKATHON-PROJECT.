@@ -9,7 +9,7 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
 
-/* HEADER */
+
 header{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,#050a0f,#071525,#050a0f);flex-shrink:0;gap:10px;}
 .logo{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:var(--accent);text-shadow:var(--glow);letter-spacing:4px;white-space:nowrap;}
 .logo span{color:var(--accent2);}
@@ -24,11 +24,10 @@ header{display:flex;align-items:center;justify-content:space-between;padding:7px
 .hdr-btn:hover{border-color:var(--accent);color:var(--accent);}
 .hdr-btn.on{border-color:var(--py-fn);color:var(--py-fn);background:rgba(80,250,123,.08);}
 
-/* LAYOUT */
+
 .main{display:grid;grid-template-columns:200px 1fr 1fr 230px;flex:1;overflow:hidden;transition:grid-template-columns .35s cubic-bezier(.4,0,.2,1);}
 .main.py-hidden{grid-template-columns:200px 1fr 0px 230px;}
 
-/* PANELS */
 .panel{background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
 .panel.right{border-right:none;border-left:1px solid var(--border);}
 .ptitle{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:3px;color:var(--accent);padding:7px 10px;border-bottom:1px solid var(--border);flex-shrink:0;}
@@ -56,7 +55,6 @@ select{width:100%;padding:5px 7px;background:var(--panel2);border:1px solid var(
 .run-btn:hover{box-shadow:var(--glow);}
 .run-btn:disabled{opacity:.4;cursor:not-allowed;}
 
-/* GRID AREA */
 .grid-area{position:relative;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);}
 .grid-toolbar{display:flex;align-items:center;gap:8px;padding:5px 10px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--panel);font-size:10px;flex-wrap:wrap;}
 .tool-btn{padding:3px 9px;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all .2s;}
@@ -69,7 +67,7 @@ select{width:100%;padding:5px 7px;background:var(--panel2);border:1px solid var(
 #fog-canvas{z-index:3;}
 #overlay-canvas{z-index:4;}
 #canvas3d{z-index:5;}
-/* Map search bar */
+
 .map-search{display:none;position:absolute;top:6px;left:50%;transform:translateX(-50%);z-index:10;background:var(--panel);border:1px solid var(--accent);display:flex;gap:4px;padding:4px 6px;font-family:'Share Tech Mono',monospace;font-size:10px;}
 .map-search.visible{display:flex;}
 .map-search input{background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:3px 7px;font-family:'Share Tech Mono',monospace;font-size:10px;width:220px;outline:none;}
@@ -82,12 +80,11 @@ select{width:100%;padding:5px 7px;background:var(--panel2);border:1px solid var(
 #fog-canvas{position:absolute;top:0;left:0;pointer-events:none;}
 #overlay-canvas{position:absolute;top:0;left:0;pointer-events:none;cursor:crosshair;}
 
-/* ALERT BANNER */
 .alert-banner{position:absolute;top:0;left:0;right:0;z-index:100;background:rgba(255,61,90,.9);color:#fff;font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;padding:6px 14px;display:flex;align-items:center;gap:10px;transform:translateY(-100%);transition:transform .3s ease;border-bottom:2px solid var(--danger);}
 .alert-banner.show{transform:translateY(0);}
 .alert-close{margin-left:auto;cursor:pointer;font-size:16px;background:none;border:none;color:#fff;}
 
-/* WAYPOINT LIST */
+
 .wp-list{max-height:120px;overflow-y:auto;margin-bottom:6px;}
 .wp-item{display:flex;align-items:center;justify-content:space-between;padding:3px 6px;border:1px solid var(--border);margin-bottom:3px;font-family:'Share Tech Mono',monospace;font-size:10px;background:var(--panel2);}
 .wp-item .wp-num{color:var(--purple);min-width:18px;}
@@ -95,7 +92,7 @@ select{width:100%;padding:5px 7px;background:var(--panel2);border:1px solid var(
 .wp-item .wp-del{color:var(--danger);cursor:pointer;background:none;border:none;font-size:12px;padding:0 2px;}
 .wp-item.active-wp{border-color:var(--warn);background:rgba(255,184,0,.08);}
 
-/* PYTHON PANEL */
+
 .py-panel{background:#0a0f1a;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .35s cubic-bezier(.4,0,.2,1),opacity .3s,min-width .35s;}
 .py-panel.collapsed{width:0!important;min-width:0!important;opacity:0;border-left:none;pointer-events:none;}
 .py-toolbar{display:flex;align-items:center;gap:5px;padding:5px 9px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--panel);}
@@ -112,9 +109,9 @@ select{width:100%;padding:5px 7px;background:var(--panel2);border:1px solid var(
 .kw{color:var(--py-kw);} .fn{color:var(--py-fn);} .st{color:var(--py-str);} .cm{color:var(--py-cm);font-style:italic;} .nm{color:var(--py-num);} .bi{color:var(--py-bi);}
 .pybadge{background:rgba(80,250,123,.15);border:1px solid var(--py-fn);color:var(--py-fn);font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 7px;letter-spacing:1px;}
 
-/* TELEMETRY */
+
 .bat-bar{height:11px;background:var(--panel2);border:1px solid var(--border);overflow:hidden;margin-bottom:8px;}
-/* SPEED GRAPH */
+
 .speed-graph-wrap{background:var(--panel2);border:1px solid var(--accent);padding:6px;margin-bottom:7px;}
 .speed-graph-title{display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent);margin-bottom:4px;letter-spacing:1px;}
 #speed-canvas{display:block;width:100%;height:48px;}
@@ -143,10 +140,10 @@ select{width:100%;padding:5px 7px;background:var(--panel2);border:1px solid var(
 .li{display:flex;align-items:center;gap:6px;font-size:10px;}
 .ld{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
 
-/* 3D canvas */
+
 #canvas3d{position:absolute;top:0;left:0;display:none;}
 .grid-wrap.view3d #grid-canvas,.grid-wrap.view3d #osm-canvas,.grid-wrap.view3d #fog-canvas,.grid-wrap.view3d #overlay-canvas{display:none;}
 .grid-wrap.view3d #canvas3d{display:block;}
 
-/* ENERGY TOOLTIP */
+
 .energy-tooltip{position:absolute;background:rgba(5,10,15,.95);border:1px solid var(--accent);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:10px;padding:4px 8px;pointer-events:none;z-index:50;display:none;}
