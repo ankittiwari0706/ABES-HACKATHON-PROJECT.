@@ -1,6 +1,4 @@
-# Θ* — ANY-ANGLE PATH PLANNING
-# Unlike A*, Theta* uses Line-of-Sight to create
-# diagonal shortcuts, producing smoother paths.
+
 import heapq, math
 
 def line_of_sight(grid, a, b):
@@ -29,11 +27,11 @@ def theta_star(grid, start, goal, cfg):
             path=[]; c=goal
             while c!=parent[c]: path.append(c); c=parent[c]
             path.append(start); return path[::-1]
-        for nb in neighbors8(curr, grid):  # 8-connected
+        for nb in neighbors8(curr, grid):  
             if nb in closed: continue
             los_checks+=1
             gpar=parent[curr]
-            # KEY: if LOS from grandparent → skip intermediate
+           
             if line_of_sight(grid, gpar, nb):
                 ng=g[gpar]+dist(gpar,nb)
                 if ng < g.get(nb,inf):
