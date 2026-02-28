@@ -1,9 +1,4 @@
-// ============================================================
-// PY VIEWER  —  Python source strings, highlighter, panel UI
-// ============================================================
-
-// PYTHON SECTIONS
-// ══════════════════════════════════════════════════════════════
+/
 const PY = {
 'THETA': `# Θ* — ANY-ANGLE PATH PLANNING
 # Unlike A*, Theta* uses Line-of-Sight to create
@@ -192,9 +187,7 @@ class GeofenceEnforcer:
 
 const ALGO_PY = {theta:'THETA',astar:'THETA',dstar:'THETA',gwa:'THETA',dijkstra:'THETA',apf:'THETA'};
 
-// ══════════════════════════════════════════════════════════════
-// PYTHON PANEL
-// ══════════════════════════════════════════════════════════════
+
 let pyOpen=true, pyTab='active', curSection='THETA';
 
 function highlight(code){
@@ -264,15 +257,15 @@ document.addEventListener('keydown',e=>{
     return;
   }
 });
-// ── ZOOM: mouse wheel on grid area ────────────────────────────────────────
+
 document.getElementById('grid-wrap').addEventListener('wheel', e=>{
   e.preventDefault();
   if(osmVisible && leafletMap){
-    // Zoom the real map
+ 
     if(e.deltaY < 0) leafletMap.zoomIn(1);
     else leafletMap.zoomOut(1);
   } else {
-    // Grid zoom
+    
     const delta = e.deltaY < 0 ? 0.1 : -0.1;
     zoomGrid(delta);
   }
@@ -280,4 +273,4 @@ document.getElementById('grid-wrap').addEventListener('wheel', e=>{
 
 
 
-// ══════════════════════════════════════════════════════════════
+
