@@ -1,9 +1,4 @@
-// ============================================================
-// PLANNING  —  runPlanning, onAlgoChange, DBAR battery check
-// ============================================================
 
-// RUN PLANNING
-// ══════════════════════════════════════════════════════════════
 function onAlgoChange(){
   const a=document.getElementById('algo-select').value;
   document.getElementById('hdr-algo').textContent=a.toUpperCase();
