@@ -221,31 +221,7 @@
     </div>
   </div>
 
-</div><!-- .main -->
-
-
-  <!--
-    ╔══════════════════════════════════════════════════════════════╗
-    ║               AEROS v3  —  JavaScript modules               ║
-    ║  Load order matters: state first, then features, init last  ║
-    ╚══════════════════════════════════════════════════════════════╝
-    
-    js/state.js        — Grid constants, all shared variables, canvas refs, zoom
-    js/pyViewer.js     — Python code strings, syntax highlighter, panel toggle
-    js/map.js          — Leaflet OSM underlay, location search, opacity sync  
-    js/overpass.js     — Real obstacle fetch from OSM Overpass API
-    js/fog.js          — Fog-of-war reveal and canvas drawing
-    js/energy.js       — Battery-range contour map (Dijkstra outward)
-    js/geofence.js     — Zone overlay, live breach detection, alerts
-    js/algorithms.js   — Theta*, A*, D* Lite, GW-A*, Dijkstra
-    js/waypoints.js    — Add/remove/list waypoints, mission chaining, Bezier
-    js/renderer.js     — 3D isometric, grid draw, heatmap, trail, renderAll
-    js/interaction.js  — Mouse events, draw modes, canvas hit-testing
-    js/planning.js     — runPlanning, onAlgoChange, DBAR battery check
-    js/ui.js           — Sliders, draw modes, view switch, clear, log
-    js/drone.js        — Animation loop, m/s speed, speed graph widget
-    js/init.js         — Boot: initGrid → resizeCanvases → first render
-  -->
+</div>
 
   <script src="./state.js"></script>
   <script src="pyViewer.js"></script>
