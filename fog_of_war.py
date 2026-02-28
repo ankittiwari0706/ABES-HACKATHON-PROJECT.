@@ -1,7 +1,4 @@
-# PARTIAL MAP REVEAL (Fog of War)
-# Drone only "sees" cells within sensor radius.
-# D* handles unknown terrain by treating unseen
-# cells as potentially blocked until revealed.
+
 
 class FogOfWar:
     def __init__(self, rows, cols, reveal_radius=6):
@@ -24,10 +21,10 @@ class FogOfWar:
                 if self.fog[nr][nc]:
                     self.fog[nr][nc] = False
                     self.revealed_count += 1
-                    # If obstacle found, trigger D* replan
+                    
                     if grid[nr][nc] in (OBSTACLE,NOFLY):
                         newly_found_obstacles.append((nc,nr))
-        return newly_found_obstacles  # feed to D*.update_obstacle()
+        return newly_found_obstacles  
 
     def coverage_pct(self):
         return self.revealed_count / self.total * 100
