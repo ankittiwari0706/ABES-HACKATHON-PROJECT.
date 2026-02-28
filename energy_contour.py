@@ -1,6 +1,4 @@
-# ENERGY CONTOUR MAP
-# Shows reachable range from any point given current battery.
-# Uses Dijkstra from drone position outward.
+
 import heapq
 
 def energy_contour(grid, source, battery_pct,
