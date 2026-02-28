@@ -1,9 +1,4 @@
-// ============================================================
-// FOG  —  fog-of-war reveal and canvas drawing
-// ============================================================
 
-// FOG OF WAR
-// ══════════════════════════════════════════════════════════════
 function revealFog(cx,cy){
   let count=0,newObstacles=[];
   for(let dr=-fogRadius;dr<=fogRadius;dr++) for(let dc=-fogRadius;dc<=fogRadius;dc++){
@@ -40,4 +35,4 @@ function drawFog(){
   document.getElementById('fog-hidden').textContent=(100-pct)+'%';
 }
 
-// ══════════════════════════════════════════════════════════════
+
