@@ -1,6 +1,4 @@
-// ============================================================
-// ALGORITHMS  —  Theta*, A*, D* Lite, GW-A*, Dijkstra
-// ============================================================
+
 
 let thetaLOS=0,thetaDiag=0;
 function lineOfSight(x0,y0,x1,y1){
@@ -17,6 +15,7 @@ function lineOfSight(x0,y0,x1,y1){
     if(e2<dx){err+=dx;cy+=sy;}
   }
 }
+
 function thetaStar(sx,sy,gx,gy){
   thetaLOS=0;thetaDiag=0;
   const key=(x,y)=>`${x},${y}`;
@@ -64,9 +63,7 @@ function thetaStar(sx,sy,gx,gy){
   return[];
 }
 
-// ══════════════════════════════════════════════════════════════
-// A* / DIJKSTRA / GW-A* / D* / APF (unchanged core)
-// ══════════════════════════════════════════════════════════════
+
 function stepCost(x,y){
   if(grid[y][x]===CELL.OBSTACLE||grid[y][x]===CELL.NOFLY) return Infinity;
   return 1+windSpeed*0.05+envPenalty/100+(temperature<0?0.3:temperature>35?0.2:0);
