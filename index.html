@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AEROS v3 — Advanced Drone Platform</title>
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- App styles -->
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+
+<body>
+
+<!-- ALERT BANNER -->
+<div class="alert-banner" id="alert-banner">
+  <span style="font-size:16px">⚠</span>
+  <span id="alert-msg">GEOFENCE VIOLATION DETECTED</span>
+  <button class="alert-close" onclick="closeAlert()">✕</button>
+</div>
+
+<header>
+  <div class="logo">AER<span>OS</span> <span style="font-size:11px;color:var(--dim);letter-spacing:1px">v3</span></div>
+  <div class="status-bar">
+    <div class="stat"><span class="stat-label">ALGO</span><span class="stat-value" id="hdr-algo">—</span></div>
+    <div class="stat"><span class="stat-label">BATTERY</span><span class="stat-value" id="hdr-bat">100%</span></div>
+    <div class="stat"><span class="stat-label">STEPS</span><span class="stat-value ok" id="hdr-steps">0</span></div>
+    <div class="stat"><span class="stat-label">STATUS</span><span class="stat-value" id="hdr-status">IDLE</span></div>
+    <div class="stat"><span class="stat-label">WAYPTS</span><span class="stat-value" id="hdr-wpts" style="color:var(--purple)">0</span></div>
+    <div class="stat"><span class="stat-label">FOG</span><span class="stat-value" id="hdr-fog" style="color:var(--warn)">ON</span></div>
+    <button class="hdr-btn on" id="py-toggle-btn" onclick="togglePyPanel()" title="Ctrl+P">◀ 🐍 CODE</button>
+    <button class="hdr-btn" id="btn-3d" onclick="toggle3D()" title="3D View">⬡ 3D</button>
+    <button class="hdr-btn" id="btn-osm" onclick="toggleOSM()" title="Live OSM Map">🗺 MAP</button>
+    <button class="hdr-btn" id="btn-search" onclick="toggleMapSearch()" title="Search location">🔍</button>
+  </div>
+</header>
+
+<div class="main" id="main-layout">
+
+  <!-- LEFT PANEL -->
+  <div class="panel">
+    <div class="ptitle">⬡ MISSION CONFIG</div>
+    <div class="pbody">
+      <div class="cgroup">
+        <span class="clabel">Algorithm</span>
+        <select id="algo-select" onchange="onAlgoChange()">
+          <option value="astar">A* Classic</option>
+          <option value="dstar">D* Lite</option>
+          <option value="gwa">GW-A* (Grey Wolf)</option>
+          <option value="dijkstra">Dijkstra</option>
+        </select>
+      </div>
+
+      <div class="cgroup">
+        <span class="clabel">Draw Mode</span>
+        <button class="btn active" id="btn-obstacle" onclick="setDrawMode('obstacle')"><div class="btn-dot" style="background:#ff3d5a"></div>Obstacle</button>
+        <button class="btn" id="btn-nofly" onclick="setDrawMode('nofly')"><div class="btn-dot" style="background:#ffb800"></div>No-Fly Zone</button>
+        <button class="btn purple-btn" id="btn-waypoint" onclick="setDrawMode('waypoint')"><div class="btn-dot" style="background:#bd93f9"></div>Add Waypoint</button>
+        <button class="btn" id="btn-destination" onclick="setDrawMode('destination')"><div class="btn-dot" style="background:#ff00ff"></div>Set Destination</button>
+        <button class="btn" id="btn-erase" onclick="setDrawMode('erase')"><div class="btn-dot" style="background:var(--dim)"></div>Erase</button>
+      </div>
+
+      <!-- DESTINATION INFO -->
+      <div style="background:var(--panel2);border:1px solid var(--border);padding:6px;font-family:'Share Tech Mono',monospace;font-size:9px;margin-bottom:9px;">
+        <div style="color:var(--dim);margin-bottom:2px;">DESTINATION</div>
+        <div id="dest-coords" style="color:#ff00ff;">NOT SET</div>
+      </div>
+
+      <!-- WAYPOINTS -->
+      <div class="cgroup">
+        <span class="clabel">Waypoints <span id="wp-count" style="color:var(--purple)">(0)</span></span>
+        <div class="wp-list" id="wp-list"></div>
+        <button class="btn danger-btn" onclick="clearWaypoints()" style="font-size:10px;">✕ Clear Waypoints</button>
+      </div>
+
+      <hr class="divider">
+      <div class="cgroup">
+        <span class="clabel">Battery &amp; Environment</span>
+        <div class="sw"><label>Battery <span id="bat-val">100%</span></label><input type="range" min="10" max="100" value="100" id="sl-bat" oninput="updateBat()"></div>
+        <div class="sw"><label>Wind Speed <span id="wind-val">0 m/s</span></label><input type="range" min="0" max="20" value="0" id="sl-wind" oninput="updateWind()"></div>
+        <div class="sw"><label>Temperature <span id="temp-val">20°C</span></label><input type="range" min="-10" max="45" value="20" id="sl-temp" oninput="updateTemp()"></div>
+        <div class="sw"><label>SVR Penalty <span id="svr-val">5%</span></label><input type="range" min="0" max="30" value="5" id="sl-svr" oninput="updateSVR()"></div>
+        <div class="sw"><label>Fog Radius <span id="fog-val">6</span> cells</label><input type="range" min="2" max="15" value="6" id="sl-fog" oninput="updateFog()"></div>
+      </div>
+      <hr class="divider">
+      <div class="cgroup">
+        <span class="clabel">Drone Speed</span>
+        <div class="sw"><label>Speed <span id="speed-val">5</span> m/s</label><input type="range" min="1" max="20" value="5" id="sl-speed" oninput="updateSpeed()"></div>
+        <div style="display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);margin-top:-4px;margin-bottom:4px;"><span>SLOW</span><span>FAST</span></div>
+      </div>
+      <hr class="divider">
+      <div class="cgroup">
+        <span class="clabel">Actions</span>
+        <button class="run-btn" id="run-btn" onclick="runPlanning()">▶ PLAN MISSION</button>
+        <button class="btn primary" onclick="animateDrone()" id="fly-btn" disabled>◈ FLY PATH</button>
+        <button class="btn" onclick="generateRandomMap()">⟳ RANDOM MAP</button>
+        <button class="btn danger-btn" onclick="clearGrid()">✕ CLEAR ALL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID CENTER -->
+  <div class="grid-area">
+    <div class="grid-toolbar">
+      <span style="font-family:'Orbitron',monospace;font-size:8px;color:var(--dim);letter-spacing:2px;">MAP VIEW</span>
+      <span style="color:var(--border)">|</span>
+      <button class="tool-btn active" onclick="setView('grid')" id="vbtn-grid">GRID</button>
+      <button class="tool-btn" onclick="setView('energy')" id="vbtn-energy">⚡ ENERGY</button>
+      <button class="tool-btn" onclick="setView('heat')" id="vbtn-heat">HEAT</button>
+      <span style="color:var(--border)">|</span>
+      <button class="tool-btn" onclick="zoomGrid(-0.15)" title="Zoom out (-)">−</button>
+      <span id="zoom-pct" style="font-size:9px;font-family:'Share Tech Mono',monospace;color:var(--accent);min-width:32px;text-align:center">100%</span>
+      <button class="tool-btn" onclick="zoomGrid(0.15)" title="Zoom in (+)">+</button>
+      <span style="color:var(--border)">|</span>
+      <span style="font-size:9px;color:var(--dim);font-family:'Share Tech Mono',monospace" id="coord-display">—</span>
+    </div>
+    <div class="grid-wrap" id="grid-wrap">
+      <div id="leaflet-map" style="display:none"></div>
+      <div class="map-search" id="map-search">
+        <input type="text" id="map-search-input" placeholder="Search city, address..." onkeydown="if(event.key==='Enter')searchLocation()"/>
+        <button onclick="searchLocation()">GO</button>
+        <button onclick="toggleMapSearch()" style="border-color:var(--dim);color:var(--dim)">✕</button>
+      </div>
+      <div class="map-info" id="map-info">🗺 LIVE MAP OFF</div>
+      <canvas id="osm-canvas" style="display:none"></canvas>
+      <canvas id="grid-canvas"></canvas>
+      <canvas id="fog-canvas"></canvas>
+      <canvas id="overlay-canvas"></canvas>
+      <canvas id="canvas3d"></canvas>
+    </div>
+    <div class="energy-tooltip" id="energy-tooltip"></div>
+  </div>
+
+  <!-- PYTHON PANEL -->
+  <div class="py-panel" id="py-panel">
+    <div class="py-toolbar">
+      <span style="font-family:'Orbitron',monospace;font-size:8px;color:var(--py-fn);letter-spacing:2px;">🐍 PYTHON</span>
+      <span class="pybadge" id="active-fn-badge">IDLE</span>
+      <div style="flex:1"></div>
+      <button class="py-tab active" id="pytab-active" onclick="setPyTab('active')">ACTIVE</button>
+      <button class="py-tab" id="pytab-all" onclick="setPyTab('all')">FULL</button>
+    </div>
+    <div class="py-code" id="py-code-box"></div>
+  </div>
+
+  <!-- RIGHT TELEMETRY -->
+  <div class="panel right">
+    <div class="ptitle">⬡ TELEMETRY</div>
+    <div class="pbody">
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--dim);margin-bottom:2px;"><span>BATTERY SOC</span><span id="bat-pct-lbl" style="font-family:'Share Tech Mono',monospace;color:var(--accent2)">100%</span></div>
+      <div class="bat-bar"><div class="bat-fill" id="bat-fill" style="width:100%"></div></div>
+      <div class="mgrid">
+        <div class="mcard"><span class="v" id="m-steps">0</span><span class="l">STEPS</span></div>
+        <div class="mcard"><span class="v" id="m-cost">0</span><span class="l">COST</span></div>
+        <div class="mcard"><span class="v" id="m-energy">0%</span><span class="l">ENERGY</span></div>
+        <div class="mcard"><span class="v" id="m-wpts">0</span><span class="l">WAYPTS</span></div>
+        <div class="mcard" style="grid-column:span 2;border-color:var(--accent)"><span class="v" id="m-speed" style="color:var(--accent);font-size:18px;">— <span style="font-size:11px;font-family:Share Tech Mono">m/s</span></span><span class="l">LIVE SPEED</span></div>
+      </div>
+
+      <!-- SPEED GRAPH -->
+      <div class="speed-graph-wrap">
+        <div class="speed-graph-title">
+          <span>◈ SPEED GRAPH</span>
+          <span id="speed-graph-label">m/s over mission</span>
+        </div>
+        <canvas id="speed-canvas" width="200" height="48"></canvas>
+        <div class="speed-stats">
+          <div class="speed-stat"><span class="sv" id="spd-cur">—</span><span class="sl">CURRENT</span></div>
+          <div class="speed-stat"><span class="sv" id="spd-avg">—</span><span class="sl">AVG</span></div>
+          <div class="speed-stat"><span class="sv" id="spd-max">—</span><span class="sl">MAX</span></div>
+          <div class="speed-stat"><span class="sv" id="spd-min">—</span><span class="sl">MIN</span></div>
+        </div>
+      </div>
+
+      <!-- GEOFENCE STATUS -->
+      <div style="background:var(--panel2);border:1px solid var(--border);padding:5px 8px;font-size:9px;margin-bottom:7px;display:flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;">
+        <div class="gfdot" id="gf-dot"></div>
+        <span id="gf-text">GEOFENCE: CLEAR</span>
+      </div>
+
+      <!-- THETA* INFO -->
+      <div style="background:var(--panel2);border:1px solid var(--border);padding:6px;font-family:'Share Tech Mono',monospace;font-size:9px;margin-bottom:7px;">
+        <div style="color:var(--warn);letter-spacing:1px;margin-bottom:3px;">Θ* ANY-ANGLE PATH</div>
+        <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--dim)">LOS Checks</span><span id="theta-los" style="color:var(--accent)">—</span></div>
+        <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--dim)">Diag Edges</span><span id="theta-diag" style="color:var(--accent)">—</span></div>
+        <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--dim)">Path Angle</span><span id="theta-angle" style="color:var(--accent2)">—</span></div>
+      </div>
+
+      <!-- WAYPOINT PROGRESS -->
+      <div style="background:var(--panel2);border:1px solid var(--purple);padding:6px;font-family:'Share Tech Mono',monospace;font-size:9px;margin-bottom:7px;">
+        <div style="color:var(--purple);letter-spacing:1px;margin-bottom:3px;">⬡ WAYPOINT NAV</div>
+        <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--dim)">Current</span><span id="wp-current" style="color:var(--purple)">—</span></div>
+        <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--dim)">Remaining</span><span id="wp-remaining" style="color:var(--text)">—</span></div>
+        <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--dim)">ETA Steps</span><span id="wp-eta" style="color:var(--accent2)">—</span></div>
+      </div>
+
+      <!-- FOG / REVEAL -->
+      <div style="background:var(--panel2);border:1px solid var(--warn);padding:6px;font-family:'Share Tech Mono',monospace;font-size:9px;margin-bottom:7px;">
+        <div style="color:var(--warn);letter-spacing:1px;margin-bottom:3px;">◎ PARTIAL MAP REVEAL</div>
+        <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--dim)">Revealed</span><span id="fog-revealed" style="color:var(--warn)">0%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:1px 0;"><span style="color:var(--dim)">Hidden</span><span id="fog-hidden" style="color:var(--dim)">100%</span></div>
+      </div>
+
+      <div class="clabel" style="margin-bottom:4px;">LOG</div>
+      <div class="log-box" id="log-box">
+        <div class="le"><span class="lt">00:00</span><span class="linfo">AEROS v3 ready</span></div>
+      </div>
+      <div class="legend">
+        <div class="li"><div class="ld" style="background:#2a5a90"></div>Safe Zone</div>
+        <div class="li"><div class="ld" style="background:#aa2020"></div>Obstacle</div>
+        <div class="li"><div class="ld" style="background:#aa9010"></div>No-Fly Zone</div>
+        <div class="li"><div class="ld" style="background:#1a8050"></div>Traversed</div>
+        <div class="li"><div class="ld" style="background:#0a9acc"></div>Path</div>
+        <div class="li"><div class="ld" style="background:#8830cc"></div>Waypoint</div>
+        <div class="li"><div class="ld" style="background:#00ff9d"></div>Drone</div>
+        <div class="li"><div class="ld" style="background:#ff00ff"></div>Destination</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- .main -->
+
+
+  <!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║               AEROS v3  —  JavaScript modules               ║
+    ║  Load order matters: state first, then features, init last  ║
+    ╚══════════════════════════════════════════════════════════════╝
+    
+    js/state.js        — Grid constants, all shared variables, canvas refs, zoom
+    js/pyViewer.js     — Python code strings, syntax highlighter, panel toggle
+    js/map.js          — Leaflet OSM underlay, location search, opacity sync  
+    js/overpass.js     — Real obstacle fetch from OSM Overpass API
+    js/fog.js          — Fog-of-war reveal and canvas drawing
+    js/energy.js       — Battery-range contour map (Dijkstra outward)
+    js/geofence.js     — Zone overlay, live breach detection, alerts
+    js/algorithms.js   — Theta*, A*, D* Lite, GW-A*, Dijkstra
+    js/waypoints.js    — Add/remove/list waypoints, mission chaining, Bezier
+    js/renderer.js     — 3D isometric, grid draw, heatmap, trail, renderAll
+    js/interaction.js  — Mouse events, draw modes, canvas hit-testing
+    js/planning.js     — runPlanning, onAlgoChange, DBAR battery check
+    js/ui.js           — Sliders, draw modes, view switch, clear, log
+    js/drone.js        — Animation loop, m/s speed, speed graph widget
+    js/init.js         — Boot: initGrid → resizeCanvases → first render
+  -->
+
+  <script src="./state.js"></script>
+  <script src="pyViewer.js"></script>
+  <script src="map.js"></script>
+  <script src="overpass.js"></script>
+  <script src="fog.js"></script>
+  <script src="./energy.js"></script>
+  <script src="./geofence.js"></script>
+  <script src="./algorithms.js"></script>
+  <script src="./waypoints.js"></script>
+  <script src="./renderer.js"></script>
+  <script src="./interaction.js"></script>
+  <script src="./planning.js"></script>
+  <script src="./ui.js"></script>
+  <script src="./drone.js"></script>
+  <script src="./init.js"></script>
+
+</body>
+</html>
