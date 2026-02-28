@@ -1,6 +1,4 @@
-# NO-FLY ZONE ENFORCEMENT WITH ALERTS
-# Geofences fire real-time alerts when path enters
-# restricted airspace — not just a pre-flight check.
+
 
 class GeofenceEnforcer:
     def __init__(self, zones, alert_callback):
