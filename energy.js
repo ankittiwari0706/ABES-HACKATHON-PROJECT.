@@ -1,9 +1,4 @@
-// ============================================================
-// ENERGY  —  battery-range contour map (Dijkstra outward)
-// ============================================================
 
-// ENERGY CONTOUR MAP
-// ══════════════════════════════════════════════════════════════
 function computeEnergyMap(){
   const src={x:dronePos.x,y:dronePos.y};
   const maxE=(battery/100)-0.15;
@@ -37,16 +32,15 @@ function drawEnergyMap(){
     if(grid[r][c]===CELL.OBSTACLE){ctxG.fillStyle='#8a1818';ctxG.fillRect(x,y,cellW-1,cellH-1);continue;}
     if(grid[r][c]===CELL.NOFLY){ctxG.fillStyle='#8a7a10';ctxG.fillRect(x,y,cellW-1,cellH-1);continue;}
     if(energyMap[k]!==undefined){
-      const t=1-energyMap[k]/maxE; // 1=close/cheap, 0=far/expensive
+      const t=1-energyMap[k]/maxE; 
       const r1=Math.floor((1-t)*255);
       const g1=Math.floor(t*255);
       ctxG.fillStyle=`rgb(${r1},${g1},60)`;
     } else {
-      ctxG.fillStyle='#0d1f35'; // unreachable
+      ctxG.fillStyle='#0d1f35'; 
     }
     ctxG.fillRect(x,y,cellW-1,cellH-1);
   }
-  // Contour lines
   ctxG.strokeStyle='rgba(255,255,255,0.18)';ctxG.lineWidth=0.8;
   for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
     const k=`${c},${r}`;const kR=`${c+1},${r}`;const kD=`${c},${r+1}`;
@@ -58,6 +52,3 @@ function drawEnergyMap(){
   drawGeofenceOverlay(ctxG);drawMarkersOnCtx(ctxG);
 }
 
-// ══════════════════════════════════════════════════════════════
-// GEOFENCE OVERLAY & ALERTS
-// ══════════════════════════════════════════════════════════════
