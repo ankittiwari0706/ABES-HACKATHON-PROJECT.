@@ -1,9 +1,4 @@
-// ============================================================
-// MAP  —  Leaflet OSM underlay, location search, opacity sync
-// ============================================================
 
-// REAL LEAFLET OSM MAP UNDERLAY
-// ══════════════════════════════════════════════════════════════
 let osmVisible=false;
 let leafletMap=null;
 let mapInitialized=false;
@@ -17,12 +12,12 @@ function initLeafletMap(){
   mapDiv.style.height=wrap.clientHeight+'px';
 
   leafletMap=L.map('leaflet-map',{
-    center:[28.6139,77.2090], // Default: New Delhi
+    center:[28.6139,77.2090], 
     zoom:14,
     zoomControl:false,
     attributionControl:false,
     dragging:true,
-    scrollWheelZoom:false, // managed by our wheel handler
+    scrollWheelZoom:false, 
   });
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
@@ -30,7 +25,7 @@ function initLeafletMap(){
     attribution:'© OpenStreetMap'
   }).addTo(leafletMap);
 
-  // Sync map size to grid-wrap on resize
+  
   window.addEventListener('resize',()=>{
     if(!leafletMap) return;
     mapDiv.style.width=wrap.clientWidth+'px';
@@ -38,7 +33,7 @@ function initLeafletMap(){
     leafletMap.invalidateSize();
   });
 
-  // Update coord display with map center
+ 
   leafletMap.on('move',()=>{
     const c=leafletMap.getCenter();
     document.getElementById('map-info').textContent=
@@ -52,7 +47,7 @@ function initLeafletMap(){
 }
 
 function syncGridToMap(){
-  // Draws a semi-transparent grid overlay aligned to the map
+  
   if(!osmVisible||!leafletMap) return;
   const wrap=document.getElementById('grid-wrap');
   const W=wrap.clientWidth, H=wrap.clientHeight;
@@ -72,7 +67,7 @@ function toggleOSM(){
     mapDiv.style.display='block';
     initLeafletMap();
     addLog('🗺 Live OSM map ON — drag to pan','ok');
-    // Auto-fetch real obstacles after map tiles load
+    
     setTimeout(()=>fetchRealObstacles(), 2500);
   } else {
     mapDiv.style.display='none';
@@ -87,13 +82,13 @@ function toggleOSM(){
   renderAll();
 }
 
-// Make grid canvases semi-transparent over map
+
 function updateCanvasOpacity(){
   if(osmVisible){
     canvasGrid.style.display='none';
     canvasFog.style.opacity='0.75';
     canvasOSM.style.display='none';
-    // Let clicks pass through to overlay for destination/waypoint placement
+   
     canvasOv.style.pointerEvents='all';
   } else {
     canvasGrid.style.display='block';
@@ -102,7 +97,7 @@ function updateCanvasOpacity(){
   }
 }
 
-// Search location using Nominatim geocoder
+
 function toggleMapSearch(){
   const el=document.getElementById('map-search');
   el.classList.toggle('visible');
@@ -131,8 +126,5 @@ async function searchLocation(){
     addLog('Search failed — check internet connection','err');
   }
 }
-function drawOSM(){ /* legacy stub — real map via Leaflet */ }
+function drawOSM(){  }
 
-// ══════════════════════════════════════════════════════════════
-// OVERPASS API — fetch real buildings/water/parks as obstacles
-// ══════════════════════════════════════════════════════════════
