@@ -1,21 +1,18 @@
-// ============================================================
-// DRONE  —  animation loop, m/s speed conversion, speed graph
-// ============================================================
+
+//  animation , speed conversion, speed graph
+
 
 function metersPerCell(){
   if(osmVisible && leafletMap){
     const b=leafletMap.getBounds();
     const latSpan=b.getNorth()-b.getSouth();
-    // 1 degree latitude ≈ 111,320 m
     const totalMetersH=latSpan*111320;
-    return totalMetersH/ROWS; // meters per grid row = meters per cell height
+    return totalMetersH/ROWS; 
   }
-  return 5; // default: 5 m per cell in grid-only mode
+  return 5; 
 }
 
-// ══════════════════════════════════════════════════════════════
-// DRONE ANIMATION
-// ══════════════════════════════════════════════════════════════
+
 function animateDrone(){
   if(!path.length) return;
   missionRunning=true;droneStep=0;currentWpIndex=0;trailHistory=[];speedHistory=[];lastStepTime=0;
@@ -35,14 +32,14 @@ function animateDrone(){
       renderAll();return;
     }
     const p=path[droneStep];dronePos=p;
-    // Track trail
+    
     trailHistory.push({x:p.x,y:p.y});
-    // Reveal fog
+    
     revealFog(p.x,p.y);
     if(grid[p.y][p.x]===CELL.PATH) grid[p.y][p.x]=CELL.COVERED;
-    // Geofence live check
+    
     checkGeofenceStep(p.x,p.y,droneStep);
-    // Waypoint arrival
+  
     if(wpIdx<waypoints.length&&p.x===waypoints[wpIdx].x&&p.y===waypoints[wpIdx].y){
       addLog(`✓ Waypoint W${wpIdx+1} reached at (${p.x},${p.y})`,'ok');
       const el=document.getElementById('wpitem-'+wpIdx);if(el)el.classList.add('active-wp');
@@ -109,16 +106,16 @@ function drawSpeedGraph(){
   canvas.width=W; canvas.height=H;
   const ctx=canvas.getContext('2d');
   ctx.clearRect(0,0,W,H);
-  // Background
+  
   ctx.fillStyle='#0a1520'; ctx.fillRect(0,0,W,H);
-  // Grid lines
+
   ctx.strokeStyle='rgba(0,212,255,0.08)'; ctx.lineWidth=0.5;
   [H*0.25,H*0.5,H*0.75].forEach(y=>{ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();});
   if(speedHistory.length<2) return;
   const maxSpd=Math.max(...speedHistory,droneSpeed)*1.1||1;
-  const pts=speedHistory.slice(-W); // last W samples max
+  const pts=speedHistory.slice(-W); 
   const step=W/Math.max(pts.length-1,1);
-  // Fill area under curve
+  
   const grad=ctx.createLinearGradient(0,0,0,H);
   grad.addColorStop(0,'rgba(0,212,255,0.35)');
   grad.addColorStop(1,'rgba(0,212,255,0.03)');
@@ -128,17 +125,17 @@ function drawSpeedGraph(){
   ctx.lineTo((pts.length-1)*step,H);
   ctx.closePath();
   ctx.fillStyle=grad; ctx.fill();
-  // Line
+  
   ctx.beginPath();
   ctx.strokeStyle='rgba(0,212,255,0.9)'; ctx.lineWidth=1.5;
   pts.forEach((v,i)=>{ const x=i*step, y=H-(v/maxSpd)*(H-4)-2; if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); });
   ctx.stroke();
-  // Current speed dot
+  
   const lastX=(pts.length-1)*step;
   const lastY=H-(pts[pts.length-1]/maxSpd)*(H-4)-2;
   ctx.beginPath(); ctx.arc(lastX,lastY,3,0,Math.PI*2);
   ctx.fillStyle='#00d4ff'; ctx.fill();
-  // Speed limit line (target speed)
+ 
   const targetY=H-(droneSpeed/maxSpd)*(H-4)-2;
   ctx.strokeStyle='rgba(255,184,0,0.5)'; ctx.lineWidth=1; ctx.setLineDash([3,4]);
   ctx.beginPath(); ctx.moveTo(0,targetY); ctx.lineTo(W,targetY); ctx.stroke();
